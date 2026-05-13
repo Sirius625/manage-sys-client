@@ -55,15 +55,6 @@ const logout = () => {
     authStore.logout()
     router.push({ name: 'Login' })
 }
-
-// window.addEventListener('beforeunload', () => {
-//     sessionStorage.setItem('currentRoute', route.fullPath);
-// });
-// const saved = sessionStorage.getItem('currentRoute');
-// if (saved && saved !== '/') {
-//     router.replace(saved); // 恢复到原页面
-// }
-
 </script>
 
 <style scoped>

@@ -14,6 +14,18 @@ const routes = [
     meta: { requiresAuth: true, roles: ['admin', 'editor'], showInMenu: true, title: '仪表盘' }
   },
   {
+    path: '/likedSongs',
+    name: 'LikedSongs',
+    component: () => import('../views/LikedSongs.vue'),
+    meta: { requiresAuth: true, roles: ['admin', 'editor'], showInMenu: true, title: '喜欢的歌曲' }
+  },
+  {
+    path: '/playHistory',
+    name: 'PlayHistory',
+    component: () => import('../views/PlayHistory.vue'),
+    meta: { requiresAuth: true, roles: ['admin', 'editor'], showInMenu: true, title: '播放历史' }
+  },
+  {
     path: '/orders',
     name: 'Orders',
     component: () => import('../views/OrderListView.vue'),

@@ -1,12 +1,16 @@
 <template>
-  <el-dialog
-    :model-value="visible"
-    :title="title"
-    width="400px"
-    :before-close="handleCancel"
-    @update:model-value="updateVisible"
-  >
-    <p>{{ message }}</p>
+  <el-dialog :model-value="visible" :title="title" width="400px" :before-close="handleCancel"
+    @update:model-value="updateVisible">
+    <!-- 正确使用 #header 插槽 -->
+    <template #header>
+      <slot name="header">
+        <!-- 可选：提供默认标题，如果父组件没传 header 则显示这个 -->
+        <span>{{ title }}</span>
+      </slot>
+    </template>
+    <slot>
+      <p> 确定执行此操作吗？ </p>
+    </slot>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="handleCancel">{{ cancelText ? cancelText : '取消' }}</el-button>
@@ -20,7 +24,6 @@
 const props = defineProps<{
   visible: boolean
   title: string
-  message: string
   confirmText?: string
   cancelText?: string
 }>()

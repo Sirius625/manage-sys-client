@@ -20,11 +20,17 @@ export const useSettingsStore = defineStore('settings', () => {
 })
 
 export const useAuthStore = defineStore('auth', {
-  state: () => ({
-    isLoggedIn: false,
-    user: null as { id: number; name: string; email: string; role: string; avatar?: string, token?: string } | null,
-    token: localStorage.getItem('token') || ''
-  }),
+  state: () => {
+    // 尝试从 localStorage 恢复用户信息
+    const savedUser = localStorage.getItem('user')
+    const savedToken = localStorage.getItem('token') || ''
+    const parsedUser = savedUser ? JSON.parse(savedUser) : null
+    return {
+      isLoggedIn: !!savedToken && !!parsedUser,
+      user: parsedUser as { id: number; name: string; email: string; role: string; avatar?: string, token?: string } | null,
+      token: savedToken
+    }
+  },
   getters: {
     role: (state) => state.user?.role === '管理员' ? 'admin' : 'editor'
   },
@@ -33,13 +39,15 @@ export const useAuthStore = defineStore('auth', {
       this.isLoggedIn = true
       this.user = user
       this.token = user.token
-      localStorage.setItem('token', this.token)
+      localStorage.setItem('token', user.token)
+      localStorage.setItem('user', JSON.stringify(user))
     },
     logout() {
       this.isLoggedIn = false
       this.user = null
       this.token = ''
       localStorage.removeItem('token')
+      localStorage.removeItem('user')
     }
   }
 })

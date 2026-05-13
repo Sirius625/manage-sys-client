@@ -1,4 +1,4 @@
-import { get, post, put } from './index'
+import { get, post, put, del } from './index'
 
 export const fetchDashboardStats = () => get('/dashboard/stats')
 
@@ -157,5 +157,30 @@ export const updateAfterSalesStatus = async (id: number, status: string) => {
 
 export const fetchAnalyticsData = async () => {
   const result = await get<{ data: any }>('/analytics')
+  return result.data || { data: null }
+}
+
+export const getSongs = async (params: { keyword?: string; page?: number; pageSize?: number }) => {
+  const result = await get<{ data: any }>('/songs', { params })
+  return result.data || { data: null }
+}
+export const updateSongs = async () => {
+  const result = await post<{ data: any }>('/songs')
+  return result.data || { data: null }
+}
+
+/**
+ * 获取播放历史列表
+ */
+export const getPlayHistory = async (params: { keyword?: string; page?: number; pageSize?: number }) => {
+  const result = await get<{ data: any; total: number }>('/history', { params })
+  return result.data || { data: [], total: 0 }
+}
+
+/**
+ * 清空播放历史
+ */
+export const clearPlayHistory = async () => {
+  const result = await del('/history/clear')
   return result.data || { data: null }
 }
