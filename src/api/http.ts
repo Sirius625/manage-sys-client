@@ -184,3 +184,34 @@ export const clearPlayHistory = async () => {
   const result = await del('/history/clear')
   return result.data || { data: null }
 }
+
+// ==================== 图片管理接口 ====================
+
+/**
+ * 获取图片列表
+ */
+export const fetchImages = async ({ keyword = '', page = 1, pageSize = 10 } = {}) => {
+  const result = await get<{ data: Array<any>; total: number }>('/images', {
+    params: { keyword, page, pageSize }
+  })
+  return {
+    data: result.data?.data || [],
+    total: result.data?.total || 0
+  }
+}
+
+/**
+ * 上传图片
+ */
+export const uploadImage = async (data: { title: string; description: string; imageBase64: string }) => {
+  const result = await post('/images/upload', data)
+  return result.data || { data: null }
+}
+
+/**
+ * 删除图片
+ */
+export const deleteImage = async (id: number) => {
+  const result = await del(`/images/${id}`)
+  return result.data || { success: false }
+}

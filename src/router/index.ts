@@ -80,6 +80,12 @@ const routes = [
     meta: { requiresAuth: true, roles: ['admin', 'editor'], showInMenu: true, title: '数据分析' }
   },
   {
+    path: '/images',
+    name: 'Images',
+    component: () => import('../views/ImageManageView.vue'),
+    meta: { requiresAuth: true, roles: ['admin', 'editor'], showInMenu: true, title: '图片管理' }
+  },
+  {
     path: '/settings',
     name: 'Settings',
     component: () => import('../views/SettingsView.vue'),
