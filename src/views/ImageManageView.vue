@@ -2,36 +2,22 @@
   <div class="page-card">
     <div class="page-heading">
       <h3>图片管理</h3>
-      <div class="heading-actions">
-        <el-button type="primary" @click="showUploadDialog = true">
-          <i class="el-icon-upload"></i> 上传图片
-        </el-button>
-        <el-button @click="fetchData">刷新列表</el-button>
-      </div>
+      <el-button type="primary" @click="showUploadDialog = true">上传图片</el-button>
     </div>
 
     <div class="filter-row">
-      <el-input
-        v-model="searchKeyword"
-        placeholder="搜索图片标题 / 描述"
-        clearable
-        @clear="handleSearch"
-        @keyup.enter.native="handleSearch"
-        style="width: 260px"
-      />
+      <el-input v-model="searchKeyword" placeholder="搜索图片标题 / 描述" clearable @clear="handleSearch"
+        @keyup.enter.native="handleSearch" style="width: 260px" />
       <el-button type="primary" @click="handleSearch">搜索</el-button>
+      <el-button @click="refresh">刷新列表</el-button>
     </div>
 
     <el-table :data="images" v-loading="loading" stripe style="width: 100%">
       <el-table-column prop="id" label="编号" width="80" />
       <el-table-column label="图片" width="120">
         <template #default="{ row }">
-          <el-image
-            :src="'http://localhost:3030' + row.url"
-            style="width: 80px; height: 60px"
-            fit="cover"
-            :preview-src-list="['http://localhost:3030' + row.url]"
-          />
+          <el-image :src="'http://localhost:3030' + row.url" style="width: 80px; height: 60px; cursor: pointer"
+            fit="cover" @click="previewImage('http://localhost:3030' + row.url)" />
         </template>
       </el-table-column>
       <el-table-column prop="title" label="标题" min-width="150" show-overflow-tooltip />
@@ -53,32 +39,16 @@
     </el-table>
 
     <div class="pagination-row">
-      <el-pagination
-        background
-        layout="prev, pager, next, jumper, ->, total"
-        :page-size="pageSize"
-        :current-page="currentPage"
-        :total="total"
-        @current-change="handlePageChange"
-      />
+      <el-pagination background layout="prev, pager, next, jumper, ->, total" :page-size="pageSize"
+        :current-page="currentPage" :total="total" @current-change="handlePageChange" />
     </div>
 
     <!-- 上传图片对话框 -->
-    <el-dialog
-      v-model="showUploadDialog"
-      title="上传图片"
-      width="500px"
-      :close-on-click-modal="false"
-    >
+    <el-dialog v-model="showUploadDialog" title="上传图片" width="500px" :close-on-click-modal="false">
       <el-form :model="uploadForm" label-width="80px">
         <el-form-item label="图片文件" required>
-          <el-upload
-            ref="uploadRef"
-            :auto-upload="false"
-            :show-file-list="false"
-            :on-change="handleFileChange"
-            accept="image/jpeg,image/png,image/webp"
-          >
+          <el-upload ref="uploadRef" :auto-upload="false" :show-file-list="false" :on-change="handleFileChange"
+            accept="image/jpeg,image/png,image/webp">
             <el-button type="primary">选择图片</el-button>
             <template #tip>
               <div class="el-upload__tip">支持 JPG/PNG/WebP，最大 5MB</div>
@@ -92,12 +62,7 @@
           <el-input v-model="uploadForm.title" placeholder="请输入图片标题" />
         </el-form-item>
         <el-form-item label="描述">
-          <el-input
-            v-model="uploadForm.description"
-            type="textarea"
-            :rows="3"
-            placeholder="请输入图片描述（可选）"
-          />
+          <el-input v-model="uploadForm.description" type="textarea" :rows="3" placeholder="请输入图片描述（可选）" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -108,13 +73,15 @@
       </template>
     </el-dialog>
 
-    <ConfirmDialog
-      v-model:visible="dialogVisible"
-      title="确认删除"
-      :message="dialogMessage"
-      @confirm="handleConfirm"
-      @cancel="handleCancel"
-    />
+    <!-- 图片预览对话框 -->
+    <el-dialog v-model="showPreviewDialog" title="图片预览" width="800px" top="5vh" destroy-on-close>
+      <div style="text-align: center">
+        <el-image :src="previewImageUrl" style="max-width: 100%; max-height: 70vh" fit="contain" />
+      </div>
+    </el-dialog>
+
+    <ConfirmDialog v-model:visible="dialogVisible" title="确认删除" :message="dialogMessage" @confirm="handleConfirm"
+      @cancel="handleCancel" />
   </div>
 </template>
 
@@ -141,6 +108,15 @@ const uploadForm = ref({
   description: ''
 })
 
+// 图片预览
+const showPreviewDialog = ref(false)
+const previewImageUrl = ref('')
+
+const previewImage = (url: string) => {
+  previewImageUrl.value = url
+  showPreviewDialog.value = true
+}
+
 // 删除确认
 const dialogVisible = ref(false)
 const dialogMessage = ref('')
@@ -160,8 +136,15 @@ const fetchData = async () => {
     console.error('获取图片列表失败:', e)
     ElMessage.error('获取图片列表失败')
   } finally {
-    loading.value = false
+    setTimeout(() => {
+      loading.value = false
+    }, 100) // 模拟加载时间，实际项目中可根据需要调整或去掉
   }
+}
+
+const refresh = () => {
+  currentPage.value = 1
+  fetchData()
 }
 
 const handleSearch = () => {
@@ -211,7 +194,7 @@ const handleUpload = async () => {
     const reader = new FileReader()
     const base64 = await new Promise<string>((resolve) => {
       reader.onload = (e) => resolve(e.target?.result as string)
-      reader.readAsDataURL(selectedFile.value)
+      reader.readAsDataURL(selectedFile.value!)
     })
 
     const result = await uploadImage({
@@ -275,6 +258,33 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.page-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.filter-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.pagination-row {
+  margin-top: 18px;
+  display: flex;
+  justify-content: flex-end;
+}
+
 .upload-preview {
   margin-top: 10px;
   padding: 10px;

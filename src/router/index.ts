@@ -14,6 +14,12 @@ const routes = [
     meta: { requiresAuth: true, roles: ['admin', 'editor'], showInMenu: true, title: '仪表盘' }
   },
   {
+    path: '/images',
+    name: 'Images',
+    component: () => import('../views/ImageManageView.vue'),
+    meta: { requiresAuth: true, roles: ['admin', 'editor'], showInMenu: true, title: '图片管理' }
+  },
+  {
     path: '/likedSongs',
     name: 'LikedSongs',
     component: () => import('../views/LikedSongs.vue'),
@@ -78,12 +84,6 @@ const routes = [
     name: 'Analytics',
     component: () => import('../views/DataAnalysisView.vue'),
     meta: { requiresAuth: true, roles: ['admin', 'editor'], showInMenu: true, title: '数据分析' }
-  },
-  {
-    path: '/images',
-    name: 'Images',
-    component: () => import('../views/ImageManageView.vue'),
-    meta: { requiresAuth: true, roles: ['admin', 'editor'], showInMenu: true, title: '图片管理' }
   },
   {
     path: '/settings',
