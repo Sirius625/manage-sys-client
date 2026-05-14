@@ -101,23 +101,21 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
   const { isLoggedIn, role } = authStore
-  
-//   if (token) {
-//     if(to.path === '/login') {
-//       return next({ name: 'Dashboard' })
-//     } else {
-//       if(role && role.length > 0) {
-//         return next()
-//       } else {
-//         return next({ name: 'Login' })
-//       }
-//     }
-//   }
+  const token = authStore.token
 
-  if (to.meta.requiresAuth && !isLoggedIn) {
-    return next({ name: 'Login' })
+  // 如果已登录且访问登录页，跳转到仪表盘
+  if (to.name === 'Login' && isLoggedIn && token) {
+    return next({ name: 'Dashboard' })
   }
 
+  // 需要认证的页面，检查是否已登录且有有效token
+  if (to.meta.requiresAuth) {
+    if (!isLoggedIn || !token) {
+      return next({ name: 'Login' })
+    }
+  }
+
+  // 检查角色权限
   if (Array.isArray(to.meta.roles) && !to.meta.roles.includes(role)) {
     return next({ name: 'Dashboard' })
   }

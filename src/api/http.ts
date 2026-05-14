@@ -190,9 +190,9 @@ export const clearPlayHistory = async () => {
 /**
  * 获取图片列表
  */
-export const fetchImages = async ({ keyword = '', page = 1, pageSize = 10 } = {}) => {
+export const fetchImages = async ({ keyword = '', category = '', isPublic = '', userId = '', page = 1, pageSize = 10 } = {}) => {
   const result = await get<{ data: Array<any>; total: number }>('/images', {
-    params: { keyword, page, pageSize }
+    params: { keyword, category, isPublic, userId, page, pageSize }
   })
   return {
     data: result.data?.data || [],
@@ -203,10 +203,11 @@ export const fetchImages = async ({ keyword = '', page = 1, pageSize = 10 } = {}
 /**
  * 上传图片
  */
-export const uploadImage = async (data: { title: string; description: string; imageBase64: string }) => {
+export const uploadImage = async (data: { title: string; description: string; category?: string; isPublic?: boolean; imageBase64: string }) => {
   const result = await post('/images/upload', data)
   return result.data || { data: null }
 }
+
 
 /**
  * 删除图片

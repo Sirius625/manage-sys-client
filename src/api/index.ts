@@ -28,7 +28,17 @@ const http = axios.create({
 
 http.interceptors.response.use(
   (response: AxiosResponse) => response,
-  (error) => Promise.reject(error)
+  (error) => {
+    if (error.response?.status === 401) {
+      // token 过期，清除本地存储并跳转到登录页
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      ElMessage.error('登录已过期，请重新登录')
+      // 跳转到登录页
+      window.location.href = '/login'
+    }
+    return Promise.reject(error)
+  }
 )
 // 请求拦截器 更新token
 http.interceptors.request.use(config => {

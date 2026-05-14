@@ -148,23 +148,25 @@ const submitRegister = async () => {
   await registerFormRef.value.validate(async (valid) => {
     if (valid) {
       try {
-        await registerUser({
+        const result = await registerUser({
           name: registerForm.name,
           password: registerForm.password,
           email: registerForm.email,
           role: registerForm.role
         })
-        // 注册成功后自动登录
-        const user = {
-          id: Date.now(), // 临时ID
-          name: registerForm.name,
-          email: registerForm.email,
-          role: registerForm.role,
-          avatar: '', // 默认头像,
-          token: '' // 注册后没有token，登录后会获取
+        // 检查注册是否成功（后端返回 id 表示成功）
+        if (result && result.id) {
+          // 注册成功后自动登录
+          const loginResult = await loginUser(registerForm.name, registerForm.password)
+          if (loginResult && loginResult.token) {
+            authStore.login(loginResult)
+            router.push({ name: 'Dashboard' })
+          } else {
+            console.error('注册成功但自动登录失败')
+          }
+        } else {
+          console.error('注册失败:', result?.message || '未知错误')
         }
-        authStore.login(user)
-        router.push({ name: 'Dashboard' })
       } catch (error) {
         console.error('注册失败:', error)
       }

@@ -8,9 +8,23 @@
     <div class="filter-row">
       <el-input v-model="searchKeyword" placeholder="搜索图片标题 / 描述" clearable @clear="handleSearch"
         @keyup.enter.native="handleSearch" style="width: 260px" />
+      <el-select v-model="filterCategory" placeholder="选择分类" clearable @change="handleCategoryChange" style="width: 140px">
+        <el-option label="全部" value="" />
+        <el-option label="运动" value="运动" />
+        <el-option label="日常" value="日常" />
+        <el-option label="游戏" value="游戏" />
+        <el-option label="其他" value="其他" />
+      </el-select>
+      <el-select v-model="filterIsPublic" placeholder="可见性" clearable @change="handleIsPublicChange" style="width: 120px">
+        <el-option label="全部" value="" />
+        <el-option label="公开" value="1" />
+        <el-option label="私密" value="0" />
+      </el-select>
       <el-button type="primary" @click="handleSearch">搜索</el-button>
+
       <el-button @click="refresh">刷新列表</el-button>
     </div>
+
 
     <el-table :data="images" v-loading="loading" stripe style="width: 100%">
       <el-table-column prop="id" label="编号" width="80" />
@@ -22,8 +36,23 @@
       </el-table-column>
       <el-table-column prop="title" label="标题" min-width="150" show-overflow-tooltip />
       <el-table-column prop="description" label="描述" min-width="200" show-overflow-tooltip />
+      <el-table-column prop="category" label="分类" width="100">
+        <template #default="{ row }">
+          <el-tag :type="row.category === '运动' ? 'danger' : row.category === '日常' ? 'success' : row.category === '游戏' ? 'warning' : 'info'" size="small">
+            {{ row.category || '其他' }}
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column prop="author" label="上传者" width="120" />
+      <el-table-column label="可见性" width="80">
+        <template #default="{ row }">
+          <el-tag :type="row.is_public ? 'success' : 'danger'" size="small">
+            {{ row.is_public ? '公开' : '私密' }}
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column prop="likes" label="点赞数" width="80" />
+
       <el-table-column label="上传时间" width="180">
         <template #default="{ row }">
           {{ row.created_at ? new Date(row.created_at).toLocaleString('zh-CN') : '-' }}
@@ -44,7 +73,7 @@
     </div>
 
     <!-- 上传图片对话框 -->
-    <el-dialog v-model="showUploadDialog" title="上传图片" width="500px" :close-on-click-modal="false">
+    <el-dialog v-model="showUploadDialog" title="上传图片" width="500px" :close-on-click-modal="false" append-to-body>
       <el-form :model="uploadForm" label-width="80px">
         <el-form-item label="图片文件" required>
           <el-upload ref="uploadRef" :auto-upload="false" :show-file-list="false" :on-change="handleFileChange"
@@ -64,7 +93,23 @@
         <el-form-item label="描述">
           <el-input v-model="uploadForm.description" type="textarea" :rows="3" placeholder="请输入图片描述（可选）" />
         </el-form-item>
+        <el-form-item label="分类">
+          <el-select v-model="uploadForm.category" placeholder="选择分类" style="width: 100%">
+            <el-option label="运动" value="运动" />
+            <el-option label="日常" value="日常" />
+            <el-option label="游戏" value="游戏" />
+            <el-option label="其他" value="其他" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="可见性">
+          <el-radio-group v-model="uploadForm.isPublic">
+            <el-radio :value="true">公开</el-radio>
+            <el-radio :value="false">私密</el-radio>
+          </el-radio-group>
+        </el-form-item>
       </el-form>
+
+
       <template #footer>
         <el-button @click="showUploadDialog = false">取消</el-button>
         <el-button type="primary" :loading="uploading" @click="handleUpload">
@@ -94,7 +139,10 @@ import ConfirmDialog from '@/components/ConfirmDialog.vue'
 const images = ref<any[]>([])
 const loading = ref(false)
 const searchKeyword = ref('')
+const filterCategory = ref('')
+const filterIsPublic = ref('')
 const currentPage = ref(1)
+
 const pageSize = ref(10)
 const total = ref(0)
 
@@ -105,8 +153,12 @@ const previewUrl = ref('')
 const selectedFile = ref<File | null>(null)
 const uploadForm = ref({
   title: '',
-  description: ''
+  description: '',
+  category: '其他',
+  isPublic: true
 })
+
+
 
 // 图片预览
 const showPreviewDialog = ref(false)
@@ -127,6 +179,8 @@ const fetchData = async () => {
   try {
     const result = await fetchImages({
       keyword: searchKeyword.value,
+      category: filterCategory.value,
+      isPublic: filterIsPublic.value,
       page: currentPage.value,
       pageSize: pageSize.value
     })
@@ -138,7 +192,7 @@ const fetchData = async () => {
   } finally {
     setTimeout(() => {
       loading.value = false
-    }, 100) // 模拟加载时间，实际项目中可根据需要调整或去掉
+    }, 100)
   }
 }
 
@@ -152,10 +206,24 @@ const handleSearch = () => {
   fetchData()
 }
 
+const handleCategoryChange = (value: string) => {
+  filterCategory.value = value
+  currentPage.value = 1
+  fetchData()
+}
+
+const handleIsPublicChange = (value: string) => {
+  filterIsPublic.value = value
+  currentPage.value = 1
+  fetchData()
+}
+
 const handlePageChange = (page: number) => {
   currentPage.value = page
   fetchData()
 }
+
+
 
 const handleFileChange = (file: any) => {
   const rawFile = file.raw as File | undefined
@@ -200,6 +268,8 @@ const handleUpload = async () => {
     const result = await uploadImage({
       title: uploadForm.value.title,
       description: uploadForm.value.description,
+      category: uploadForm.value.category,
+      isPublic: uploadForm.value.isPublic,
       imageBase64: base64
     })
 
@@ -208,9 +278,13 @@ const handleUpload = async () => {
       showUploadDialog.value = false
       uploadForm.value.title = ''
       uploadForm.value.description = ''
+      uploadForm.value.category = '其他'
+      uploadForm.value.isPublic = true
       previewUrl.value = ''
       selectedFile.value = null
       fetchData()
+
+
     } else {
       ElMessage.error('上传失败')
     }

@@ -1,6 +1,6 @@
 <template>
   <el-dialog :model-value="visible" :title="title" width="400px" :before-close="handleCancel"
-    @update:model-value="updateVisible">
+    @update:model-value="updateVisible" append-to-body>
     <!-- 正确使用 #header 插槽 -->
     <template #header>
       <slot name="header">

@@ -16,12 +16,13 @@
                     <h2>后台管理系统</h2>
                     <p class="role-tag">当前身份：{{ authStore.user?.role || '未登录' }}</p>
                 </div>
-                <el-button type="text" @click="logout" v-if="authStore.isLoggedIn">退出登录</el-button>
+                <el-button type="text" @click="handleLogout" v-if="authStore.isLoggedIn">退出登录</el-button>
             </header>
             <main class="workspace">
                 <router-view />
             </main>
         </section>
+
     </div>
 </template>
 
@@ -51,9 +52,11 @@ const menuItems = computed(() => {
 })
 
 
-const logout = () => {
-    authStore.logout()
-    router.push({ name: 'Login' })
+const handleLogout = () => {
+    if (window.confirm('确定要退出登录吗？')) {
+        authStore.logout()
+        router.push({ name: 'Login' })
+    }
 }
 </script>
 
@@ -84,6 +87,7 @@ const logout = () => {
     /* width: 100%; */
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
 .topbar {
@@ -103,5 +107,28 @@ const logout = () => {
 
 .workspace {
     padding: 24px;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .app-shell {
+        grid-template-columns: 1fr !important;
+    }
+
+    .topbar {
+        padding: 12px 16px;
+    }
+
+    .topbar h2 {
+        font-size: 16px;
+    }
+
+    .workspace {
+        padding: 12px;
+    }
 }
 </style>
