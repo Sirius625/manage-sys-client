@@ -30,8 +30,8 @@
       <el-table-column prop="id" label="编号" width="80" />
       <el-table-column label="图片" width="120">
         <template #default="{ row }">
-          <el-image :src="'http://localhost:3030' + row.url" style="width: 80px; height: 60px; cursor: pointer"
-            fit="cover" @click="previewImage('http://localhost:3030' + row.url)" />
+          <el-image :src="UPLOAD_BASE_URL + row.url" style="width: 80px; height: 60px; cursor: pointer"
+            fit="cover" @click="previewImage(UPLOAD_BASE_URL + row.url)" />
         </template>
       </el-table-column>
       <el-table-column prop="title" label="标题" min-width="150" show-overflow-tooltip />
@@ -135,6 +135,8 @@ import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { fetchImages, uploadImage, deleteImage } from '@/api/http'
 import ConfirmDialog from '@/components/ConfirmDialog.vue'
+
+const UPLOAD_BASE_URL = import.meta.env.VITE_UPLOAD_BASE_URL || 'http://localhost:3030'
 
 const images = ref<any[]>([])
 const loading = ref(false)
