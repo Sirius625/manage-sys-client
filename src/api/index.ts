@@ -1,8 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { ElMessage } from 'element-plus'
-import { useAuthStore } from '@/store'
-const authStore = useAuthStore()
-const { token } = authStore
 export interface RequestResult<T = any> {
   success: boolean
   code: number
@@ -21,8 +18,7 @@ const http = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/json',
-    Authorization: localStorage.getItem('token') || token || ''
+    'Content-Type': 'application/json'
   }
 })
 
@@ -42,7 +38,7 @@ http.interceptors.response.use(
 )
 // 请求拦截器 更新token
 http.interceptors.request.use(config => {
-  const newtoken = localStorage.getItem('token') || token; // 从 localStorage 或 authStore 获取最新的 token
+  const newtoken = localStorage.getItem('token'); // 从 localStorage 获取最新的 token
   if (newtoken) {
     config.headers.Authorization = `${newtoken}`; // 设置 token 到 header 中
   }
