@@ -104,14 +104,15 @@ VITE_API_BASE_URL=http://localhost:3030/api
 
 ```
 src/
-├── api/              # API 请求层
-│   ├── index.ts      # Axios 封装（请求/响应拦截器）
-│   └── http.ts       # 业务 API 接口
-├── components/       # 公共组件
-│   └── ConfirmDialog.vue # 确认对话框
-├── router/           # 路由配置（含路由守卫）
-├── store/            # Pinia 状态管理（认证、设置）
-├── views/            # 页面视图
+├── api/                    # API 请求层
+│   ├── index.ts            # Axios 封装（请求/响应拦截器、Token 注入）
+│   └── http.ts             # 业务 API 接口（订单、商品、用户、文章等）
+├── components/             # 公共组件
+│   └── ConfirmDialog.vue   # 确认对话框
+├── router/                 # 路由配置（含路由守卫、权限控制）
+├── store/                  # Pinia 状态管理
+│   └── index.ts            # 认证状态（useAuthStore）+ 系统设置（useSettingsStore）
+├── views/                  # 页面视图
 │   ├── LoginView.vue              # 登录页
 │   ├── DashboardView.vue          # 仪表盘
 │   ├── OrderListView.vue          # 订单列表
@@ -128,8 +129,12 @@ src/
 │   ├── AfterSalesView.vue         # 售后管理
 │   ├── DataAnalysisView.vue       # 数据分析
 │   └── SettingsView.vue           # 设置
-└── App.vue           # 根组件（侧边栏 + 顶栏布局）
+└── App.vue                 # 根组件（侧边栏 + 顶栏布局）
 ```
+
+## 后端依赖
+
+本前端项目依赖 [project-server](../project-server/README.md) 后端服务提供 API 接口。
 
 ## 默认账号
 

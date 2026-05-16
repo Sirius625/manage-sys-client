@@ -1,6 +1,16 @@
+/**
+ * 前端路由配置
+ * 
+ * 定义管理后台的所有页面路由，包括登录、仪表盘、订单、商品、用户、
+ * 文章管理、图片管理、歌曲管理等功能模块。
+ * 
+ * @module router/index
+ */
+
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/store'
 
+/** 路由表定义 */
 const routes = [
   {
     path: '/login',
@@ -104,6 +114,10 @@ const router = createRouter({
   routes
 })
 
+/**
+ * 路由守卫
+ * 处理登录状态验证、角色权限控制、登录页重定向等
+ */
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
   const { isLoggedIn, role } = authStore
