@@ -43,6 +43,19 @@
 - 用户信息编辑
 - 密码修改
 
+### 📝 文章管理 (Articles)
+- 文章列表查询（支持关键词、分类筛选）
+- 文章详情查看
+- 新建/编辑文章（支持 Markdown 编辑与预览）
+- 文章删除
+- 文章分类管理
+
+### 🖼️ 图片管理 (Images)
+- 图片列表查询（支持关键词、分类、可见性筛选）
+- 图片上传（支持标题、描述、分类、可见性设置）
+- 图片预览
+- 图片删除
+
 ### 🎵 喜欢的歌曲 (Liked Songs)
 - 歌曲列表展示
 - 歌曲搜索
@@ -91,29 +104,31 @@ VITE_API_BASE_URL=http://localhost:3030/api
 
 ```
 src/
-├── api/          # API 请求层
-│   ├── index.ts  # Axios 封装（请求/响应拦截器）
-│   └── http.ts   # 业务 API 接口
-├── components/   # 公共组件
+├── api/              # API 请求层
+│   ├── index.ts      # Axios 封装（请求/响应拦截器）
+│   └── http.ts       # 业务 API 接口
+├── components/       # 公共组件
 │   └── ConfirmDialog.vue # 确认对话框
-├── router/       # 路由配置（含路由守卫）
-├── store/        # Pinia 状态管理（认证、设置）
-├── views/        # 页面视图
-│   ├── LoginView.vue          # 登录页
-│   ├── DashboardView.vue      # 仪表盘
-│   ├── OrderListView.vue      # 订单列表
-│   ├── OrderDetailView.vue    # 订单详情
-│   ├── ProductManageView.vue  # 商品管理
-│   ├── AddProductView.vue     # 新增商品
-│   ├── ProductDetailView.vue  # 商品详情
-│   ├── UserManageView.vue     # 用户管理
-│   ├── UserProfileView.vue    # 个人信息
-│   ├── LikedSongs.vue         # 喜欢的歌曲
-│   ├── PlayHistory.vue        # 播放历史
-│   ├── AfterSalesView.vue     # 售后管理
-│   ├── DataAnalysisView.vue   # 数据分析
-│   └── SettingsView.vue       # 设置
-└── App.vue       # 根组件（侧边栏 + 顶栏布局）
+├── router/           # 路由配置（含路由守卫）
+├── store/            # Pinia 状态管理（认证、设置）
+├── views/            # 页面视图
+│   ├── LoginView.vue              # 登录页
+│   ├── DashboardView.vue          # 仪表盘
+│   ├── OrderListView.vue          # 订单列表
+│   ├── OrderDetailView.vue        # 订单详情
+│   ├── ProductManageView.vue      # 商品管理
+│   ├── AddProductView.vue         # 新增商品
+│   ├── ProductDetailView.vue      # 商品详情
+│   ├── UserManageView.vue         # 用户管理
+│   ├── UserProfileView.vue        # 个人信息
+│   ├── ArticleManageView.vue      # 文章管理
+│   ├── ImageManageView.vue        # 图片管理
+│   ├── LikedSongs.vue             # 喜欢的歌曲
+│   ├── PlayHistory.vue            # 播放历史
+│   ├── AfterSalesView.vue         # 售后管理
+│   ├── DataAnalysisView.vue       # 数据分析
+│   └── SettingsView.vue           # 设置
+└── App.vue           # 根组件（侧边栏 + 顶栏布局）
 ```
 
 ## 默认账号

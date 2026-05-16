@@ -216,3 +216,72 @@ export const deleteImage = async (id: number) => {
   const result = await del(`/images/${id}`)
   return result.data || { success: false }
 }
+
+// ==================== 文章管理接口 ====================
+
+/**
+ * 获取文章分类列表
+ */
+export const fetchArticleCategories = async () => {
+  const result = await get<{ data: string[] }>('/articles/categories')
+  return result.data?.data || []
+}
+
+/**
+ * 获取文章列表
+ */
+export const fetchArticles = async ({ keyword = '', category = '', page = 1, pageSize = 10 } = {}) => {
+  const result = await get<{ data: Array<any>; total: number }>('/articles', {
+    params: { keyword, category, page, pageSize }
+  })
+  return {
+    data: result.data?.data || [],
+    total: result.data?.total || 0
+  }
+}
+
+/**
+ * 获取文章详情
+ */
+export const fetchArticleById = async (id: number) => {
+  const result = await get<{ data: any }>(`/articles/${id}`)
+  return result.data || { data: null }
+}
+
+/**
+ * 创建文章
+ */
+export const createArticle = async (data: {
+  title: string
+  content: string
+  summary?: string
+  category?: string
+  tags?: string[]
+  cover?: string
+}) => {
+  const result = await post('/articles', data)
+  return result.data || { data: null }
+}
+
+/**
+ * 更新文章
+ */
+export const updateArticle = async (id: number, data: {
+  title: string
+  content: string
+  summary?: string
+  category?: string
+  tags?: string[]
+  cover?: string
+}) => {
+  const result = await put(`/articles/${id}`, data)
+  return result.data || { success: false }
+}
+
+/**
+ * 删除文章
+ */
+export const deleteArticle = async (id: number) => {
+  const result = await del(`/articles/${id}`)
+  return result.data || { success: false }
+}

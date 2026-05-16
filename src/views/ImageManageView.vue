@@ -7,7 +7,7 @@
 
     <div class="filter-row">
       <el-input v-model="searchKeyword" placeholder="搜索图片标题 / 描述" clearable @clear="handleSearch"
-        @keyup.enter.native="handleSearch" style="width: 260px" />
+        @keyup.enter="handleSearch" style="width: 260px" />
       <el-select v-model="filterCategory" placeholder="选择分类" clearable @change="handleCategoryChange" style="width: 140px">
         <el-option label="全部" value="" />
         <el-option label="运动" value="运动" />
@@ -192,9 +192,7 @@ const fetchData = async () => {
     console.error('获取图片列表失败:', e)
     ElMessage.error('获取图片列表失败')
   } finally {
-    setTimeout(() => {
-      loading.value = false
-    }, 100)
+    loading.value = false
   }
 }
 

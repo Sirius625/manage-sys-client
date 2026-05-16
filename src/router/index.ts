@@ -14,6 +14,12 @@ const routes = [
     meta: { requiresAuth: true, roles: ['admin', 'editor'], showInMenu: true, title: '仪表盘' }
   },
   {
+    path: '/articles',
+    name: 'Articles',
+    component: () => import('../views/ArticleManageView.vue'),
+    meta: { requiresAuth: true, roles: ['admin', 'editor'], showInMenu: true, title: '文章管理' }
+  },
+  {
     path: '/images',
     name: 'Images',
     component: () => import('../views/ImageManageView.vue'),
