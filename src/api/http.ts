@@ -353,3 +353,34 @@ export const deleteArticle = async (id: number) => {
   const result = await del(`/articles/${id}`)
   return result.data || { success: false }
 }
+
+// ==================== 视频管理 ====================
+
+/**
+ * 获取视频列表（分页）
+ * @param params.keyword - 搜索关键词
+ * @param params.isPublic - 可见性筛选
+ * @param params.page - 页码
+ * @param params.pageSize - 每页条数
+ */
+export const fetchVideos = async ({ keyword = '', isPublic = '', page = 1, pageSize = 10 } = {}) => {
+  const result = await get<{ data: Array<any>; total: number }>('/videos', {
+    params: { keyword, isPublic, page, pageSize }
+  })
+  return {
+    data: result.data?.data || [],
+    total: result.data?.total || 0
+  }
+}
+
+/** 上传视频（Base64 格式） */
+export const uploadVideo = async (data: { title: string; description: string; isPublic?: boolean; videoBase64: string }) => {
+  const result = await post('/videos/upload', data)
+  return result.data || { data: null }
+}
+
+/** 删除视频 */
+export const deleteVideo = async (id: number) => {
+  const result = await del(`/videos/${id}`)
+  return result.data || { success: false }
+}

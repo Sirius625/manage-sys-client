@@ -36,6 +36,12 @@ const routes = [
     meta: { requiresAuth: true, roles: ['admin', 'editor'], showInMenu: true, title: '图片管理' }
   },
   {
+    path: '/videos',
+    name: 'Videos',
+    component: () => import('../views/VideoManageView.vue'),
+    meta: { requiresAuth: true, roles: ['admin', 'editor'], showInMenu: true, title: '视频管理' }
+  },
+  {
     path: '/likedSongs',
     name: 'LikedSongs',
     component: () => import('../views/LikedSongs.vue'),
